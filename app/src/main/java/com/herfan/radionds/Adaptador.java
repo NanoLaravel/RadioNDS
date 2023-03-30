@@ -15,13 +15,15 @@ public class Adaptador extends BaseAdapter {
     private int layout;
     private List<String> nombres;
     private List<String> descripciones;
+    private List<String> urlEnviar_elemento;
     private int[] imagenes;
 
-    public  Adaptador(Context context, int layout, List<String> nombres, List<String> descripciones, int[] imagenes){
+    public  Adaptador(Context context, int layout, List<String> nombres, List<String> descripciones, int[] imagenes, List<String> urlEnviar_elemento){
         this.context = context;
         this.layout = layout;
         this.nombres = nombres;
         this.descripciones = descripciones;
+        this.urlEnviar_elemento = urlEnviar_elemento;
         this.imagenes = imagenes;
     }
 
@@ -50,14 +52,17 @@ public class Adaptador extends BaseAdapter {
 
         String nombreActual = nombres.get(position);
         String descripcionActual = descripciones.get(position);
+        String urlActual = urlEnviar_elemento.get(position);
         int imgActual = imagenes[position];
 
         TextView txtNombre = v.findViewById(R.id.txtNombre);
         TextView txtDescripcion = v.findViewById(R.id.txtDescripcion);
+        TextView txtUrl = v.findViewById(R.id.txtUrl);
         ImageView imgFoto = v.findViewById(R.id.imgFoto);
 
         txtNombre.setText(nombreActual);
         txtDescripcion.setText(descripcionActual);
+        txtUrl.setText(urlActual);
         imgFoto.setImageResource(imgActual);
 
         return v;

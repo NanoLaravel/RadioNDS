@@ -2,6 +2,7 @@ package com.herfan.radionds;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     List <String> nombreEstacion;
     List <String> descripcionEstacion;
+    List <String> urlEnviar_elemento;
 
 
     @Override
@@ -72,11 +74,19 @@ public class MainActivity extends AppCompatActivity {
 
         descripcionEstacion = new ArrayList<String>();
         descripcionEstacion.add("emisora con enfasis ecologico");
-        descripcionEstacion.add("emisora comunitaria de Arblodes");
+        descripcionEstacion.add("emisora comunitaria de Arboledas");
         descripcionEstacion.add("escucha tu musica disco favorita");
         descripcionEstacion.add("escucha tu musica clasica favorita");
         descripcionEstacion.add("escucha tu musica pop favorita");
         descripcionEstacion.add("escucha otra musica favorita");
+
+        urlEnviar_elemento = new ArrayList<String>();
+        urlEnviar_elemento.add("http://150.136.165.107:8000/radio.mp3");
+        urlEnviar_elemento.add("https://stream.integracionvirtual.com/proxy/arboleda?mp=/stream");
+        urlEnviar_elemento.add("https://stream.frisky.friskyradio.com/mp3_high");
+        urlEnviar_elemento.add("https://stream.deep.friskyradio.com/mp3_high");
+        urlEnviar_elemento.add("https://stream.chill.friskyradio.com/mp3_high");
+        urlEnviar_elemento.add("https://radiomeuh2.ice.infomaniak.ch/radiomeuh2-128.mp3'");
 
         int[] imagenes = {
                 R.drawable.logo1,
@@ -87,11 +97,18 @@ public class MainActivity extends AppCompatActivity {
                 R.drawable.rana
         };
 
-        Adaptador adaptador = new Adaptador(this, R.layout.elemento, nombreEstacion, descripcionEstacion, imagenes);
+        Adaptador adaptador = new Adaptador(this, R.layout.elemento, nombreEstacion, descripcionEstacion, imagenes, urlEnviar_elemento);
         tabla.setAdapter(adaptador);
         tabla.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast.makeText(MainActivity.this, "escuchas: "+ nombreEstacion.get(position), Toast.LENGTH_SHORT).show();
+
+                    MediaItem url = MediaItem.fromUri(urlEnviar_elemento.get(position));
+                    exoPlayer.setMediaItem(url);
+                    exoPlayer.prepare();
+                    exoPlayer.play();
 
             }
         });
