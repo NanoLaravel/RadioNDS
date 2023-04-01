@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
         stopButton = findViewById(R.id.btnStop);
         ExoPlayer exoPlayer = new ExoPlayer.Builder(this ).build();
 
-         btnPlay.setOnClickListener(new View.OnClickListener() {
+
+        btnPlay.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  MediaItem url = MediaItem.fromUri("http://150.136.165.107:8000/radio.mp3");
