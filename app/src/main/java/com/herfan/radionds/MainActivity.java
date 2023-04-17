@@ -4,6 +4,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -25,7 +26,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private Button btnPlay, pauseButton, stopButton;
-    private TextView statusText;
+    private TextView tvEstado;
+    private boolean isPlaying = false;
+    private Handler handler = new Handler();
+    private boolean isVisible = true;
       GridView tabla;
     //private String streamUrl = "https://stream.integracionvirtual.com/proxy/arboleda?mp=/stream";
 
@@ -40,62 +44,77 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnPlay = findViewById(R.id.btnPlay);
-        pauseButton = findViewById(R.id.pauseButton);
         stopButton = findViewById(R.id.btnStop);
+        tvEstado = findViewById(R.id.tvEstado);
         ExoPlayer exoPlayer = new ExoPlayer.Builder(this ).build();
 
 
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 MediaItem url = MediaItem.fromUri("http://150.136.165.107:8000/radio.mp3");
-                 exoPlayer.setMediaItem(url);
-                 exoPlayer.prepare();
-                 exoPlayer.play();
-             }
-         });
+//        btnPlay.setOnClickListener(new View.OnClickListener() {
+//             @Override
+//             public void onClick(View v) {
+//                 MediaItem url = MediaItem.fromUri("http://150.136.165.107:8000/radio.mp3");
+//                 exoPlayer.setMediaItem(url);
+//                 exoPlayer.prepare();
+//                 exoPlayer.play();
+//                 tvEstado.setText("reproduciendo...");
+//
+//
+//             }
+//         });
+//
+//         stopButton.setOnClickListener(new View.OnClickListener() {
+//             @Override
+//             public void onClick(View v) {
+//                 exoPlayer.stop();
+//                 tvEstado.setText("detenido");
+//
+//             }
+//         });
 
-         pauseButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 exoPlayer.stop();
-             }
-         });
 
          tabla = findViewById(R.id.tabla);
 
          nombreEstacion = new ArrayList<String>();
          nombreEstacion.add("tuplanetaonline");
-        nombreEstacion.add("arboledas stereo");
-        nombreEstacion.add("musica disco");
-        nombreEstacion.add("musica clasica");
-        nombreEstacion.add("musica pop");
-        nombreEstacion.add("otra musica");
+        nombreEstacion.add("Arboledas stereo FM");
+        nombreEstacion.add("Belencita stereo FM");
+        nombreEstacion.add("mi gente 101.7 FM");
+        nombreEstacion.add("sagrado corazon FM");
+        nombreEstacion.add("Olimpica stereo");
+        nombreEstacion.add("Tropicana Stereo");
+        nombreEstacion.add("Lavoz de Toledo FM");
 
 
         descripcionEstacion = new ArrayList<String>();
-        descripcionEstacion.add("emisora con enfasis ecologico");
+        descripcionEstacion.add("emisora con enfasis ecologico, emite desde Chinacota");
         descripcionEstacion.add("emisora comunitaria de Arboledas");
-        descripcionEstacion.add("escucha tu musica disco favorita");
-        descripcionEstacion.add("escucha tu musica clasica favorita");
-        descripcionEstacion.add("escucha tu musica pop favorita");
-        descripcionEstacion.add("escucha otra musica favorita");
+        descripcionEstacion.add("emisora belencita estereo de Salazar de las palmas");
+        descripcionEstacion.add("Radio difusora de interes publico de Cucutilla");
+        descripcionEstacion.add("transmitiendo desde Bochalema");
+        descripcionEstacion.add("emite desde Cúcuta");
+        descripcionEstacion.add("emite desde Cúcuta");
+        descripcionEstacion.add("la autentica, emite desde Toledo");
 
         urlEnviar_elemento = new ArrayList<String>();
-        urlEnviar_elemento.add("http://150.136.165.107:8000/radio.mp3");
-        urlEnviar_elemento.add("https://stream.integracionvirtual.com/proxy/arboleda?mp=/stream");
-        urlEnviar_elemento.add("https://stream.frisky.friskyradio.com/mp3_high");
-        urlEnviar_elemento.add("https://stream.deep.friskyradio.com/mp3_high");
-        urlEnviar_elemento.add("https://stream.chill.friskyradio.com/mp3_high");
-        urlEnviar_elemento.add("https://radiomeuh2.ice.infomaniak.ch/radiomeuh2-128.mp3'");
+        urlEnviar_elemento.add("http://150.136.165.107:8000/radio.mp3");//tuplanetaonline
+        urlEnviar_elemento.add("https://stream.integracionvirtual.com/proxy/arboleda?mp=/stream");//arboledas
+        urlEnviar_elemento.add("https://stream.zenolive.com/3ncca6asuf9uv");//salazar
+        urlEnviar_elemento.add("http://stream.zeno.fm/7gp9phwgr0hvv?1680826211449");//cucutilla
+        urlEnviar_elemento.add("https://estructuraweb.com.co:9069/live");//Bochalema
+        urlEnviar_elemento.add("https://24073.live.streamtheworld.com/OLP_CUCUTAAAC.aac");//olimpica stereo
+        urlEnviar_elemento.add("https://22203.live.streamtheworld.com/TROPICANA_SC");//tropicana
+        urlEnviar_elemento.add("https://stream2.emisorasvirtuales.com/proxy/toledo/stream");//la voz de toledo
 
         int[] imagenes = {
                 R.drawable.logo1,
+                R.drawable.davidradio,
+                R.drawable.monalizacelular,
+                R.drawable.monorayas,
+                R.drawable.gatico,
+                R.drawable.pajaroraro,
                 R.drawable.pajaro,
-                R.drawable.panda,
-                R.drawable.paraiso,
-                R.drawable.perro,
-                R.drawable.rana
+                R.drawable.perro
+
         };
 
         Adaptador adaptador = new Adaptador(this, R.layout.elemento, nombreEstacion, descripcionEstacion, imagenes, urlEnviar_elemento);
@@ -111,19 +130,47 @@ public class MainActivity extends AppCompatActivity {
                     exoPlayer.prepare();
                     exoPlayer.play();
 
+                    isPlaying = true;
+                tvEstado.setText("reproduciendo...");
+                // Programa la aparición y desaparición del texto
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isVisible) {
+                            tvEstado.setVisibility(View.INVISIBLE);
+                            isVisible = false;
+                        } else {
+                            tvEstado.setVisibility(View.VISIBLE);
+                            isVisible = true;
+                        }
+                        handler.postDelayed(this, 3000); // Programa la próxima ejecución después de 1 segundo
+                    }
+                }, 3000); // Programa la primera ejecución después de 1 segundo
+
+                if (isPlaying){
+                    stopButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exoPlayer.stop();
+                            tvEstado.setText("detenido");
+
+                        }
+                    });
+                }
+                btnPlay.setOnClickListener(new View.OnClickListener() {
+//
+             public void onClick(View v) {
+                 exoPlayer.setMediaItem(url);
+                 exoPlayer.prepare();
+                 exoPlayer.play();
+                 tvEstado.setText("reproduciendo...");
+
+
+             }
+         });
+
             }
         });
-
-
-
-
-
-
-
-
-
-
-
     }
 
 }
